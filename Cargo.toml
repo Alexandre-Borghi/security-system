@@ -1,0 +1,7 @@
+[package]
+name = "security-system"
+version = "0.1.0"
+authors = ["Alexandre-Borghi <borghi.alexandre.12@gmail.com>"]
+edition = "2018"
+
+[dependencies]
