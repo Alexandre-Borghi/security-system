@@ -5,3 +5,4 @@ authors = ["Alexandre-Borghi <borghi.alexandre.12@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+v4l = "0.10.2"
