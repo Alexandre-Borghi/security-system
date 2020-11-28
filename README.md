@@ -10,7 +10,7 @@ It uses Rust because I want to learn Rust and I want the software to run fast.
 
 It is published under the MPL 2.0 license.
 
-It only works on Linux because it uses the [v4l](https://crates.io/crates/v4l) crate which uses [v4l2](https://en.wikipedia.org/wiki/Video4Linux).
+It only works on Linux because it uses [v4l2](https://en.wikipedia.org/wiki/Video4Linux) to capture images from cameras.
 
 ---
 
@@ -18,18 +18,19 @@ It only works on Linux because it uses the [v4l](https://crates.io/crates/v4l) c
 
 To build this program, please install the following dependencies
 
-### v4l2
+### opencv
 
-You will need the v4l2 development library to build this prject. If your OS uses the APT package manager, you can install v4l2 like that :
+You will need the opencv development libraries to build this project. If your OS uses the APT package manager, you can install all opencv libs like that :
 
 ```shell
-	$ sudo apt install libv4l-dev
+	$ sudo apt-get install libopencv-*
 ```
 
-### libclang
+### libclang and clang
 
-You will need to install a libclang package. I personally did this with APT :
+You will need to install a libclang package and clang binaries. I personally did this with APT :
 
 ```shell
 	$ sudo apt-get install libclang-*
+	$ sudo apt-get install clang
 ```
