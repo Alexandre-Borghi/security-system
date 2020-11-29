@@ -10,6 +10,8 @@ use opencv::videoio::prelude::*;
 use opencv::videoio::VideoCapture;
 
 fn main() {
+	// Get camera
+
 	let mut dev = VideoCapture::from_file("/dev/video0", opencv::videoio::CAP_ANY)
 		.expect("Unable to get camera");
 
@@ -24,7 +26,13 @@ fn main() {
 	println!("    Width: {}", width);
 	println!("    Height: {}", height);
 
-	let mut last_img = Mat::zeros(height, width, opencv::core::CV_8UC3)
+	// Create window
+
+	opencv::highgui::named_window("test", opencv::highgui::WINDOW_AUTOSIZE).unwrap();
+
+	// Loop
+
+	let mut last_img = Mat::zeros(height, width, opencv::core::CV_8UC1)
 		.unwrap()
 		.to_mat()
 		.unwrap();
@@ -39,15 +47,43 @@ fn main() {
 		let mut img = Mat::default().unwrap();
 		dev.retrieve(&mut img, 0)
 			.expect("Unable to get frame from camera");
+
+		let mut gray = Mat::zeros(height, width, opencv::core::CV_8UC3)
+			.unwrap()
+			.to_mat()
+			.unwrap();
+
 		let mut diff = Mat::zeros(height, width, opencv::core::CV_8UC3)
 			.unwrap()
 			.to_mat()
 			.unwrap();
 
-		opencv::core::absdiff(&img, &last_img, &mut diff).unwrap();
+		let mut thresh_diff = Mat::zeros(height, width, opencv::core::CV_8UC3)
+			.unwrap()
+			.to_mat()
+			.unwrap();
 
-		opencv::imgcodecs::imwrite("frame.jpg", &diff, &opencv::core::Vector::default()).unwrap();
+		opencv::imgproc::cvt_color(
+			&img,
+			&mut gray,
+			opencv::imgproc::ColorConversionCodes::COLOR_BGR2GRAY as i32,
+			0,
+		)
+		.unwrap();
 
-		last_img = Mat::copy(&img).unwrap();
+		opencv::core::absdiff(&gray, &last_img, &mut diff).unwrap();
+		opencv::imgproc::threshold(
+			&diff,
+			&mut thresh_diff,
+			127.,
+			255.,
+			opencv::imgproc::ThresholdTypes::THRESH_BINARY as i32,
+		)
+		.unwrap();
+
+		opencv::imgcodecs::imwrite("frame.jpg", &thresh_diff, &opencv::core::Vector::default())
+			.unwrap();
+
+		last_img = Mat::copy(&gray).unwrap();
 	}
 }

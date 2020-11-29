@@ -34,3 +34,13 @@ You will need to install a libclang package and clang binaries. I personally did
 	$ sudo apt-get install libclang-*
 	$ sudo apt-get install clang
 ```
+
+---
+
+## How does it work ?
+
+### November 29th, 2020
+
+It continually compares the image from the camera and the last image it got from the camera. It computes the difference and applies a threshold, giving this type of images :
+
+![](docs/gifs/gray-thresh-diff.gif)
