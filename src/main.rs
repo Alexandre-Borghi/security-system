@@ -26,9 +26,12 @@ fn main() {
 	println!("    Width: {}", width);
 	println!("    Height: {}", height);
 
-	// Create window
+	// Create window and timer
 
 	opencv::highgui::named_window("test", opencv::highgui::WINDOW_AUTOSIZE).unwrap();
+	let mut start_time = std::time::Instant::now();
+	let mut is_in_alert = false;
+	let mut alert_frames = 0;
 
 	// Loop
 
@@ -47,6 +50,10 @@ fn main() {
 		let mut img = Mat::default().unwrap();
 		dev.retrieve(&mut img, 0)
 			.expect("Unable to get frame from camera");
+
+		if start_time.elapsed() < std::time::Duration::from_secs(1) {
+			continue;
+		}
 
 		let mut gray = Mat::zeros(height, width, opencv::core::CV_8UC3)
 			.unwrap()
@@ -84,6 +91,24 @@ fn main() {
 		opencv::imgcodecs::imwrite("frame.jpg", &thresh_diff, &opencv::core::Vector::default())
 			.unwrap();
 
+		let white_pixels = opencv::core::sum_elems(&thresh_diff).unwrap()[0] / 255.;
+		let white_pixels = white_pixels as i32;
+
+		if !is_in_alert && white_pixels > 20 {
+			println!("Movement detected with {} pixels !", white_pixels);
+			is_in_alert = true
+		} else if is_in_alert {
+			if white_pixels > 20 {
+				alert_frames += 1;
+			} else {
+				println!("Alert lasted {} seconds", alert_frames);
+				is_in_alert = false;
+				alert_frames = 0;
+			}
+		}
+
 		last_img = Mat::copy(&gray).unwrap();
+
+		start_time = std::time::Instant::now();
 	}
 }

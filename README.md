@@ -35,6 +35,8 @@ You will need to install a libclang package and clang binaries. I personally did
 	$ sudo apt-get install clang
 ```
 
+Otherwise you can install it from [the llvm download page](https://releases.llvm.org/download.html).
+
 ---
 
 ## How does it work ?
@@ -44,3 +46,5 @@ You will need to install a libclang package and clang binaries. I personally did
 It continually compares the image from the camera and the last image it got from the camera. It computes the difference and applies a threshold, giving this type of images :
 
 ![](docs/gifs/gray-thresh-diff.gif)
+
+The pixels in white are the pixels that changed, therefore if there are white pixels, there is movement.
