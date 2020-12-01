@@ -58,4 +58,6 @@ The pixels in white are the pixels that changed, therefore if there are white pi
 
 ### December 1st, 2020
 
+I now get a frame each second and sets the system in an alert state if it detects movement, so it can keep track of for how long is a movement detected. For now, it sends an alert e-mail if an alert lasts 4 frames, so 4 seconds.
+
 I use the [lettre](https://crates.io/crates/lettre) crate to send e-mails. I added a toml config file that is read when sending e-mails to know which e-mail addresses to use. See [config-example.toml](docs/config-example.toml) to know how to fill it. For now, the e-mail address from which you send the alerts needs to be a gmail address, and you need to activate [less secure apps](https://support.google.com/accounts/answer/6010255?hl=en) for it to allow the program to send an email with it.

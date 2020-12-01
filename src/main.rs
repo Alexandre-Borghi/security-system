@@ -37,11 +37,6 @@ struct Sender {
 }
 
 fn main() {
-	// Email testing
-
-	send_alert_email();
-	return;
-
 	// Get camera
 
 	let mut dev = VideoCapture::from_file("/dev/video0", opencv::videoio::CAP_ANY)
@@ -137,6 +132,12 @@ fn main() {
 				is_in_alert = false;
 				alert_frames = 0;
 			}
+		}
+
+		// Send alerts
+
+		if alert_frames == 4 {
+			send_alert_email();
 		}
 
 		last_img = Mat::copy(&gray).unwrap();
