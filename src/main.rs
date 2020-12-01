@@ -2,14 +2,46 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+extern crate lettre;
 extern crate opencv;
+extern crate serde;
+extern crate serde_derive;
+extern crate toml;
+
+use std::fs::read_to_string;
+
+use toml::value::Value;
 
 use opencv::core::Mat;
 use opencv::core::MatExprTrait;
 use opencv::videoio::prelude::*;
 use opencv::videoio::VideoCapture;
 
+use lettre::smtp::ConnectionReuseParameters;
+use lettre::{
+	smtp::authentication::{Credentials, Mechanism},
+	EmailAddress, Envelope, SendableEmail, SmtpClient, Transport,
+};
+use serde_derive::Deserialize;
+
+#[derive(Deserialize)]
+struct Config {
+	sender: Sender,
+	contacts: Option<toml::value::Array>,
+}
+
+#[derive(Deserialize)]
+struct Sender {
+	email: String,
+	password: String,
+}
+
 fn main() {
+	// Email testing
+
+	send_alert_email();
+	return;
+
 	// Get camera
 
 	let mut dev = VideoCapture::from_file("/dev/video0", opencv::videoio::CAP_ANY)
@@ -111,4 +143,56 @@ fn main() {
 
 		start_time = std::time::Instant::now();
 	}
+}
+
+fn send_alert_email() {
+	let config = read_to_string("config.toml").unwrap();
+	let config: Config = toml::de::from_str(&config).unwrap();
+
+	let mut email_addresses = vec![];
+
+	if let Some(addresses) = config.contacts {
+		for address in addresses {
+			if let Value::String(str_addr) = address {
+				email_addresses.push(str_addr);
+			}
+		}
+	} else {
+		println!("[INFO] No contacts given, not sending e-mails");
+		return;
+	}
+
+	let body = format!(
+		"
+Alert !
+Movement has been detected from your camera !
+"
+	);
+
+	let mut email = lettre_email::EmailBuilder::new()
+		.from((config.sender.email.clone(), "Security System"))
+		.subject("Security alert !")
+		.text(body);
+
+	for addr in email_addresses {
+		println!("[INFO] Sending email to : {}", addr); // TODO: Show that only when loading config file
+		email = email.to(addr);
+	}
+
+	let email: SendableEmail = email.build().unwrap().into();
+
+	// Connect to a remote server on a custom port
+	let mut mailer = SmtpClient::new_simple("smtp.gmail.com")
+		.unwrap()
+		.credentials(Credentials::new(
+			config.sender.email,
+			config.sender.password,
+		))
+		.smtp_utf8(true)
+		.authentication_mechanism(Mechanism::Plain)
+		.connection_reuse(ConnectionReuseParameters::ReuseUnlimited)
+		.transport();
+
+	mailer.send(email).unwrap();
+	mailer.close();
 }

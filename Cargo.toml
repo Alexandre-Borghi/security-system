@@ -5,4 +5,9 @@ authors = ["Alexandre-Borghi <borghi.alexandre.12@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+serde = "1.0.117"
+serde_derive = "1.0.117"
+toml = "0.5.7"
 opencv = "0.46.3"
+lettre = "0.9.5"
+lettre_email = "0.9.4"

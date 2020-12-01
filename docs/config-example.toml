@@ -1,0 +1,8 @@
+contacts = [                # The e-mail addresses to send the alerts to 
+	"email1@example.com",
+	"email2@example.com"
+]
+
+[sender]
+email     = "your-email@gmail.com"   # The email address you want to send the alert mails from (needs to be a gmail address for now and activate less secure apps for it (https://support.google.com/accounts/answer/6010255?hl=en))
+password  = "your-password"          # Your password
