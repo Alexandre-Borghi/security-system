@@ -20,7 +20,7 @@ use opencv::videoio::VideoCapture;
 use lettre::smtp::ConnectionReuseParameters;
 use lettre::{
 	smtp::authentication::{Credentials, Mechanism},
-	EmailAddress, Envelope, SendableEmail, SmtpClient, Transport,
+	SendableEmail, SmtpClient, Transport,
 };
 use serde_derive::Deserialize;
 
